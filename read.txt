@@ -1,0 +1,39 @@
+Implementation-The way I chose to implement the minigit project was with a hash table of sorts. 
+I removed the need for the next and previous pointers in the doubly node struct and implemented the commits as a vector of type doubly node. 
+I also wanted to keep track of which current commit I was in. I kept the singly node struct the same as it was implemented as a linked list. 
+The simple member functions I made were: the default constructor and destructor, adding a file to the recent commit, removing a file from the recent commit, 
+add the current commit to the list of commits, and checkout to a previous commit. Other functions I created were the commitsVec() function which simply returns the commits vector,
+and the current() function returns the current commit.
+
+Main-The main function is pretty straightforward as it just introduces myself, then a while loop that runs until the user quits.
+Within the while loop is a switch that just runs the chosen user option. If the user repo is not initiated and the user chooses an option other than 1, it returns to initialize the repo first. 
+Once the user initializes the repo they can then perform operations on the commit. It also checks to make sure that the current commit is the most recent commit saved so no adding, removing,
+and committing can be made from a previous commit.
+
+Constructor-The object initializer first deletes the file .minigit and all of the contents within it. It then creates a new directory called .minigit.
+It then creates a new commit node (DLL Node) with commit number 0 and adds it to the commit vector.
+
+~Destructer-The destructor first deletes the file .minigit and all of its contents. It then goes through each commit in the vector and deletes all of their SLL nodes.
+It then goes to each commit and deletes that commit ptr.
+
+Add-Adding a file seemed to be more complicated than originally thought. The first step is asking the user for a filename. It then checks to see if the file can be opened,
+really if the file is in the same directory as where the minigit repo was initiated. If the file cannot be found in the current directory then it returns to enter a correct file name.
+If the file does exist it checks whether the current commit already has the file added to it. If the repo just got initialized then it will automatically tag any new files added to the commit with -00.
+If the repo already has previous commits, it checks whether a previous commit contains a recent file version of that file. If no previous versions of that file exist in the .minigit directory
+it then creates a new SLL node with the tag -00. If it finds a previous edition it sets the file version as the most recent edition file version then adds the SLL node back into the current commit.
+
+Remove-Removing a file consists of first prompting the user for a file name. If the current commits head is empty it returns to the user that the file list is already empty.
+If it’s not already empty it then checks whether the file exists in the current commit. If it’s not in the current commit, it returns that the file isn’t in the commit.
+If it is found then it removes it from the SLL according to where it is in the SLL.
+
+Commit-The first step in the commit process is to check whether there is anything to commit. If there is something to commit then it goes through all of the files that are in the current commit.
+For each file it checks whether a file with the file version already exists in .minigit. The first time the commit is run it will create the files tagged with -00 in the .minigit.
+Everytime after that it will check the file in the current directory and compare it with the file tagged with the file version in the .minigit directory.
+If changes are not made for a file it returns that the given file was not changed. If the file was changed then it will update the vile version to be the previous file version +1.
+It will then create a new file in the .minigit directory with the new file version tag and updates the file version of the SLL node.
+If all files in the current commit are unchanged then no new commit is created. If any files were changed then it creates a new commit node and makes a deep copy of all of the files from the current commit.
+It then sets the current commit to the new node deep copy. It then returns the new current commit number.
+
+Checkout-Checkout is fairly simple as it first asks the user for a previous commit number, if it’s out of the range from the commit choices it returns that no commit matches.
+If the commit exists then it asks the user to confirm that they want to overwrite the current directories. If the user confirms it then reverts the files in the current directory to all of the
+files in the .minigit directory that correspond to the given checkout commit. It then sets current commit to the checkout commit.
